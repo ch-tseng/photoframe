@@ -7,6 +7,7 @@ waitSeconds = 30  #若持續多久沒有動靜就進入預設的等待畫面
 LCD_size_w = 240
 LCD_size_h = 320
 LCD_Rotate = 180
+speakNameInEnglish = 1  #若辨識出英文人名，要用英文唸出而不用中文嗎？
 
 #Libraries required
 from picamera import PiCamera
@@ -188,7 +189,11 @@ def checkFace(imgfilePath, ynWatson = 0, useTTS = 0):
                         wordsSpeak4 = "至少也有"
                         wordsSpeak5 = "  " + str(ageMin) + "歲了" 
                         wordsSpeak6 = "等等，我認得你！"
-                        wordsSpeak7 = "您是不是" + nameFace + "?"
+                        if speakNameInEnglish != 1:
+                            wordsSpeak7 = "您是不是" + nameFace + "?"
+                        else:
+                            wordsSpeak7 = "...您是不是..."
+
                         displayWords2 = "AGE: " + str(ageMin) + "~" + str(ageMax)
                         displayWords1 = "You are " + genderSix + "!"
                         print(wordsSpeak1)
@@ -201,6 +206,7 @@ def checkFace(imgfilePath, ynWatson = 0, useTTS = 0):
     
                         disp.clear((0, 0, 0))
                         if nameFace != "":
+                            if speakNameInEnglish==1: draw_rotated_text(disp.buffer, nameFace, (10, 10), 180, font, fill=(2,2,252))
                             draw_rotated_text(disp.buffer, wordsSpeak7, (10, 50), 180, font, fill=(2,2,252))
                             draw_rotated_text(disp.buffer, wordsSpeak6, (10, 90), 180, font, fill=(2,2,252))
                         if ageMin>0: 
@@ -242,11 +248,22 @@ def checkFace(imgfilePath, ynWatson = 0, useTTS = 0):
                             tts = gTTS( txtTTS, lang="zh-TW")
                             tts.save("tts.mp3")
                             os.system('omxplayer --no-osd tts.mp3')
+                            #Use English to speak name
+                            if speakNameInEnglish==1:
+                                if nameFace!="":
+                                    tts = gTTS( nameFace, lang="en")
+                                    tts.save("name.mp3")
+                                    os.system('omxplayer --no-osd name.mp3')
                         else:
                             if nameFace != "":
                                 tts = gTTS( wordsSpeak6 + " " + wordsSpeak7, lang="zh-TW")
                                 tts.save("tts.mp3")
                                 os.system('omxplayer --no-osd tts.mp3')
+                            #Use English to speak name
+                                if speakNameInEnglish==1:
+                                    tts = gTTS( nameFace, lang="es")
+                                    tts.save("name.mp3")
+                                    os.system('omxplayer --no-osd name.mp3')
 
                         time.sleep(2)
 
