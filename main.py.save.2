@@ -2,14 +2,24 @@
 # -*- coding: utf-8 -*-
 
 
+LCDsize_w = 240  #LCD模組螢幕的寬
+LCDsize_h = 320  #LCD模組螢幕的高
 getFaceAfter = 3  #剛剛抓到的FACE可能晃動或使用者還未準備好，因此改為使用連續抓取後的第幾張FACE
 waitSeconds = 30  #若持續多久沒有動靜就進入預設的等待畫面
-LCD_size_w = 240
-LCD_size_h = 320
-LCD_Rotate = 180
+
+#Import PICamera library
+from picamera import PiCamera
+#PICamera setting
+camera = PiCamera()
+camera.resolution = (640, 480)
+camera.rotation = 90
+camera.video_stabilization = False
+camera.hflip = True
+camera.vflip = False
+camera.brightness = 60
+camera.ISO = 800
 
 #Libraries required
-from picamera import PiCamera
 from time import sleep
 import os
 import cv2
@@ -25,16 +35,6 @@ from os.path import join, dirname
 from os import environ
 from watson_developer_cloud import VisualRecognitionV3
 visual_recognition = VisualRecognitionV3('2016-05-20', api_key='5cdc66469259c6a4f2ffa532775ec86741e4f71b')
-
-#PICamera setting
-camera = PiCamera()
-camera.resolution = (640, 480)
-camera.rotation = 90
-camera.video_stabilization = False
-camera.hflip = True
-camera.vflip = False
-camera.brightness = 60
-camera.ISO = 800
 
 #Import LCD 9341 libraries
 import Adafruit_ILI9341 as TFT
@@ -54,8 +54,9 @@ font = ImageFont.truetype('fonts/zh-TW.ttf', 30)
 disp = TFT.ILI9341(DC, rst=RST, spi=SPI.SpiDev(SPI_PORT, SPI_DEVICE, max_speed_hz=64000000))
 disp.begin()  # Initialize display.
 
+#Parameters for system
 lastFaceDectedTime = time.clock()
-defaultDisplay = 0
+defaultDisplay = 0   # 0表示目前顯示即時畫面，1表示顯示的為等待畫面
 faceGetAccumulated = 0  #與getFaceAfter搭配，目前是第幾次抓到。
 
 #---------------------------------------------------------------------
@@ -63,7 +64,7 @@ faceGetAccumulated = 0  #與getFaceAfter搭配，目前是第幾次抓到。
 def displayDefaultImg():
     global defaultDisplay
     image = Image.open("face.png")
-    image = image.rotate(LCD_Rotate).resize((LCD_size_w, LCD_size_h))
+    image = image.rotate(180).resize((LCDsize_w, LCDsize_h))
     defaultDisplay = 1
     disp.display(image)
 
@@ -86,7 +87,7 @@ def checkFace(imgfilePath, ynWatson = 0, useTTS = 0):
 
     #if detectAge==1:
     displayImg = Image.open(imgfilePath)
-    displayImg = displayImg.rotate(LCD_Rotate).resize((LCD_size_w, LCD_size_h))
+    displayImg = displayImg.rotate(180).resize((LCDsize_w, LCDsize_h))
     print ('(defaultDisplay=%s , %s)' % (defaultDisplay, time.clock()-lastFaceDectedTime))
 
     if time.clock()-lastFaceDectedTime < waitSeconds: 
@@ -132,7 +133,7 @@ def checkFace(imgfilePath, ynWatson = 0, useTTS = 0):
             cv2.imwrite("cv2.jpg", img)
             defaultDisplay = 0
             displayImg = Image.open("cv2.jpg")
-            displayImg = displayImg.rotate(LCD_Rotate).resize((LCD_size_w, LCD_size_h))
+            displayImg = displayImg.rotate(180).resize((240, 320))
             disp.display(displayImg)
 
             faceGetAccumulated += 1
