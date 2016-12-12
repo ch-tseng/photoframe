@@ -25,7 +25,7 @@ from gtts import gTTS
 from os.path import join, dirname
 from os import environ
 from watson_developer_cloud import VisualRecognitionV3
-visual_recognition = VisualRecognitionV3('2016-05-20', api_key='5cdc66469259c6a4f2ffa532775ec86741e4f71b')
+visual_recognition = VisualRecognitionV3('2016-05-20', api_key='5cdc66469XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXf71b')
 
 #PICamera setting
 camera = PiCamera()
