@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 
-getFaceAfter = 99  #剛剛抓到的FACE可能晃動或使用者還未準備好，因此改為使用連續抓取後的第幾張FACE
+getFaceAfter = 5  #剛剛抓到的FACE可能晃動或使用者還未準備好，因此改為使用連續抓取後的第幾張FACE
 waitSeconds = 30  #若持續多久沒有動靜就進入預設的等待畫面
 LCD_size_w = 240
 LCD_size_h = 320
